@@ -16,6 +16,7 @@
   </main>
   <footer></footer>
   <script>
+    //1.初始化数据
     var keys = {
       '0':{0:'q',1:'w',2:'e',3:'r',4:'t',5:'y',6:'u',7:'i',8:'o',9:'p','length':10},
       '1':{0:'a',1:'s',2:'d',3:'f',4:'g',5:'h',6:'j',7:'k',8:'l','length':9},
@@ -27,48 +28,85 @@
       'q':'qq.com',
       'w':'weibo.com',
       'e':'ele.me',
-      'r':'renren.com',
-      't':'tencent.com'
+      'r':'',
+      't':'tencent.com',
+      'y':'youtube.com',
+      'u':'',
+      'i':'iqiyi.com',
+      'o':'opera.com',
+      'a':'ACfun.com',
+      'z':'zhihu.com'
     }
-
-    var hashInLocalStorage = JSON.parse(localStorage.getItem('zzz') || 'null')
+    //取出 localStorage 中的 zzz 对应的 hash
+    var hashInLocalStorage = getFromLocalStorage('zzz')
     if (hashInLocalStorage) {
       hash = hashInLocalStorage
-      
     }
 
-    var index = 0
-    while (index < keys['length']) {
-      var div = document.createElement('div')
+    //化为函数
+
+    //2. 生成键盘
+    //遍历 keys,生成 kbd 标签
+    for (let index= 0; index< keys['length']; index++) {
+      var div = tag('div', {className:'row'})
       mainXXX.appendChild(div)
+
       row = keys[index]
+      for (let index2 = 0; index2 < row['length']; index2++) {
+        var span = tag('span',{textContent:row[index2],className:'text'})
 
-      index2 = 0
-      while (index2 < row['length']) {
-        var kbd = document.createElement('kbd')
-        kbd.textContent = row[index2]
-        var button = document.createElement('button')
-        button.textContent = '编辑'
-
-        button.id = row[index2]
+        var button = tag('button',{id: 'row[index2',textContent:'编辑'}) 
         button.onclick = function (bt1) {
-          var key = bt1.target.id
+          var button2 = bt1.target
+          img2 = button2.previousSibling
+          var key = button2.id
           var newWeb = prompt('给我一个网址')
           hash[key] = newWeb
+          img2.src = 'http://' + newWeb + '/favicon.ico'
+          img2.onerror = function (xxx) {
+            xxx.target.src = '//www.thyrsi.com/t6/660/1548072764x2890208847.png'
+            
+          }
           localStorage.setItem('zzz',JSON.stringify(hash))
         }
+
+        img = tag('img')
+        if (hash[row[index2]]) {
+          img.src = 'http://www.' + hash[row[index2]] + '/favicon.ico'
+        }else{
+          img.src = '//www.thyrsi.com/t6/660/1548072764x2890208847.png'
+        }
+        img.onerror = function(eee){
+          eee.target.src = '//www.thyrsi.com/t6/660/1548072764x2890208847.png'
+        }
+
+        var kbd = tag('kbd',{className:'key'})
+        
+        kbd.appendChild(span)
+        kbd.appendChild(img)
         kbd.appendChild(button)
         div.appendChild(kbd)
-        index2 += 1
       }
-
-      index += 1
     }
+
+    //3. 监听键盘
     document.onkeypress = function (keyPress) {
       var key = keyPress['key']
       var website = hash[key]
       window.open('http://' + website, '_blank')
       
+    }
+
+    function getFromLocalStorage(name) {
+      return JSON.parse(localStorage.getItem(name) || 'null')
+    }
+
+    function tag(label, attributes) {
+      var element = document.createElement(label)
+      for(var key in attributes){
+        element[key] = attributes[key]
+      }
+      return element
     }
   </script>
 </body>
